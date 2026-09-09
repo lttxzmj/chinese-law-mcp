@@ -1,0 +1,18 @@
+# 每周冒烟：服务器 + jsDelivr 数据链任何一环坏了这里先红，不等用户报。
+name: Smoke
+on:
+  push:
+  schedule:
+    - cron: "19 3 * * 4"
+  workflow_dispatch:
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - run: npm install --omit=dev
+      - run: node test/smoke.mjs
