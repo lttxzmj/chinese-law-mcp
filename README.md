@@ -1,8 +1,8 @@
 # chinese-law-mcp
 
-中国法律法规 MCP 服务器：让 Claude、Cursor 等 AI 助手直接逐条查询 **412 部现行有效的中国法律与司法解释**（26,000+ 条，官方来源逐部人工核对）。
+中国法律法规 MCP 服务器：让 Claude、Cursor 等 AI 助手直接逐条查询 **500+ 部现行中国法律、司法解释与行政法规**（30,000+ 条，官方来源逐部人工核对）。
 
-MCP server for Chinese statutes: search 412 laws & judicial interpretations in force and fetch any article verbatim, with citable source links.
+MCP server for Chinese statutes: search 500+ Chinese statutes, judicial interpretations and administrative regulations in force and fetch any article verbatim, with citable source links.
 
 ## 工具
 
