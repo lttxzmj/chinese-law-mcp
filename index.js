@@ -2,9 +2,13 @@
 /**
  * chinese-law-mcp：中国法律法规 MCP 服务器。
  *
- * 数据来自开源语料库 chinese-law-corpus（CC0，412 部现行有效法律与司法解释、
- * 26,000+ 条逐条结构化，官方来源逐部人工核对），经 jsDelivr CDN 只读拉取，
+ * 数据来自开源语料库 chinese-law-corpus（CC0，国家级现行法律、法律解释、
+ * 司法解释与行政法规，官方来源逐部人工核对），经 jsDelivr CDN 只读拉取，
  * 本进程内缓存。无遥测，无写操作。
+ *
+ * **规模数不在本文件里写死**：语料随官方公布持续增长，写死的数上次停在 412 部
+ * （实际已超三倍），而工具描述里的数是模型唯一看得见的那个。现在一律从
+ * laws/index.json 现算（见 corpusSize），文案里只留不会过期的下界。
  *
  * 由法脉 LawPulse（律师的本地优先桌面法律研究工具）维护：
  * https://lttxzmj.github.io/lawpulse-site/
@@ -35,6 +39,9 @@ async function fetchJson(path) {
 
 const lawIndex = () => fetchJson("laws/index.json");
 
+/** 语料规模：取自刚拉到的索引，永远与上游一致。 */
+const corpusSize = (index) => `${index.length} 部`;
+
 /** 法名解析：精确 > 去「中华人民共和国」前缀精确 > 包含。 */
 async function resolveLaw(query) {
   const index = await lawIndex();
@@ -48,20 +55,26 @@ async function resolveLaw(query) {
 }
 
 const articleUrl = (slug, n) => `${SITE_BASE}/laws/${slug}/${n}.html`;
+
+/** 效力状态说人话：原来 effective 之外的值会把 pending 这样的字段值原样报给模型。 */
+const statusLabel = (status) =>
+  ({ effective: "现行有效", pending: "已公布尚未生效" })[status] ?? "见原文";
 const text = (value) => ({ content: [{ type: "text", text: value }] });
 
 const server = new McpServer({ name: "chinese-law", version: "1.0.0" });
 
 server.tool(
   "search_laws",
-  "按名称搜索中国现行有效的法律与司法解释（412 部）。返回法律标题、id 与条数。",
+  "按名称搜索中国现行有效的法律、法律解释、司法解释与行政法规（国家级现行件，不含地方性法规）。返回法律标题、id 与条数。",
   { query: z.string().describe("法律名称或关键词，如「民法典」「劳动合同」") },
   async ({ query }) => {
     const index = await lawIndex();
     const q = query.trim().replace(/^中华人民共和国/, "");
     const hits = index.filter((l) => l.title.includes(q)).slice(0, 20);
     if (!hits.length) {
-      return text(`未找到包含「${query}」的法律。语料库收录现行有效国家法律与司法解释 412 部，不含地方性法规。`);
+      return text(
+        `未找到包含「${query}」的法律。语料库收录国家级现行法律、法律解释、司法解释与行政法规 ${corpusSize(index)}，不含地方性法规。`,
+      );
     }
     return text(
       hits
@@ -94,7 +107,7 @@ server.tool(
       "",
       article.text,
       "",
-      `效力状态：${full.status === "effective" ? "现行有效" : full.status}；施行日期：${full.effectiveDate ?? "见原文"}`,
+      `效力状态：${statusLabel(full.status)}；施行日期：${full.effectiveDate ?? "见原文"}`,
       `引用链接：${articleUrl(meta.slug, article_number)}`,
       DISCLAIMER,
     ];

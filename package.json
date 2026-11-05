@@ -1,7 +1,7 @@
 {
   "name": "chinese-law-mcp",
   "version": "1.0.0",
-  "description": "MCP server for Chinese statutes: search 500+ laws in force and fetch any article by number. 中国法律法规 MCP 服务器，逐条查询现行有效法律。",
+  "description": "MCP server for Chinese statutes: search 1500+ laws, judicial interpretations and administrative regulations in force and fetch any article by number. 中国法律法规 MCP 服务器，逐条查询现行有效法律。",
   "type": "module",
   "bin": { "chinese-law-mcp": "./index.js" },
   "files": ["index.js"],
