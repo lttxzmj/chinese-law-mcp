@@ -27,6 +27,12 @@ MCP server for Chinese statutes: search 1500+ Chinese statutes, judicial interpr
 }
 ```
 
+## 配置教程
+
+面向律师的图文配置步骤（含客户端选择、安全注意项与使用示例）：
+[让 AI 助手直接查到现行法条：给律师的 MCP 入门](https://lttxzmj.github.io/lawpulse-site/blog/mcp-connect-ai-to-law.html)。
+更多律师 AI 实务教程见 [律师 AI 实务手册](https://lttxzmj.github.io/lawpulse-site/blog/index.html)。
+
 ## 数据与合规
 
 - 数据来自 [chinese-law-corpus](https://github.com/lttxzmj/chinese-law-corpus)（CC0），经 jsDelivr CDN 只读拉取，进程内缓存；本服务器无遥测、无写操作。
