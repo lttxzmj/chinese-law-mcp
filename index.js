@@ -2,7 +2,7 @@
 /**
  * chinese-law-mcp：中国法律法规 MCP 服务器。
  *
- * 数据来自开源语料库 chinese-law-dataset（CC0，国家级现行法律、法律解释、
+ * 数据来自开源语料库 chinese-law-corpus（Gitee，CC0，国家级现行法律、法律解释、
  * 司法解释与行政法规，官方来源逐部人工核对），经 jsDelivr CDN 只读拉取，
  * 本进程内缓存。无遥测，无写操作。
  *
@@ -18,9 +18,10 @@ import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js"
 import { z } from "zod";
 
 const DATA_BASE =
-  process.env.LAW_MCP_DATA_BASE ?? "https://cdn.jsdelivr.net/gh/lttxzmj/chinese-law-dataset@master";
+  process.env.LAW_MCP_DATA_BASE ??
+  "https://lawpulse-data-1256098921.cos.ap-beijing.myqcloud.com/corpus";
 const SITE_BASE = "https://lttxzmj.github.io/lawpulse-site";
-const DISCLAIMER = "（来源：chinese-law-dataset，非官方整理；正式引用请以官方公布文本为准）";
+const DISCLAIMER = "（来源：chinese-law-corpus，非官方整理；正式引用请以官方公布文本为准）";
 
 const cache = new Map();
 
