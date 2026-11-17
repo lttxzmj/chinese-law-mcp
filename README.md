@@ -44,3 +44,8 @@ MCP server for Chinese statutes: search 1500+ Chinese statutes, judicial interpr
 由 [法脉 LawPulse](https://lttxzmj.github.io/lawpulse-site/) 维护——给中国执业律师的本地优先桌面研究工具（离线法律库 + 法条笔记 + 引用可核实的合同审查）。数据随法律季度更新。
 
 MIT License.
+
+## 相关项目
+
+- [chinese-law-skills](https://github.com/lttxzmj/chinese-law-skills)：同一语料的 Agent 技能库（法条引用核验、合同审查清单、诉讼计算器等 13 个，Claude Code 一条命令安装，plugin 已捆带本 MCP）。
+- [法脉桌面端](https://lttxzmj.github.io/lawpulse-site/)：离线法律库 + 法条笔记 + AI 合同审查。
