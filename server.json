@@ -1,0 +1,21 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-07-09/server.schema.json",
+  "name": "io.github.lttxzmj/chinese-law-mcp",
+  "description": "Search Chinese statutes, judicial interpretations and administrative regulations in force and fetch any article verbatim with citable source links.",
+  "repository": {
+    "url": "https://github.com/lttxzmj/chinese-law-mcp",
+    "source": "github"
+  },
+  "version": "1.1.0",
+  "packages": [
+    {
+      "registryType": "npm",
+      "registryBaseUrl": "https://registry.npmjs.org",
+      "identifier": "chinese-law-mcp",
+      "version": "1.1.0",
+      "transport": {
+        "type": "stdio"
+      }
+    }
+  ]
+}

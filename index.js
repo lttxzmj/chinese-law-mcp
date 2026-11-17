@@ -3,7 +3,7 @@
  * chinese-law-mcp：中国法律法规 MCP 服务器。
  *
  * 数据来自开源语料库 chinese-law-corpus（Gitee，CC0，国家级现行法律、法律解释、
- * 司法解释与行政法规，官方来源逐部人工核对），经 jsDelivr CDN 只读拉取，
+ * 司法解释与行政法规，官方来源逐部人工核对），经其对象存储直读通道只读拉取，
  * 本进程内缓存。无遥测，无写操作。
  *
  * **规模数不在本文件里写死**：语料随官方公布持续增长，写死的数上次停在 412 部
@@ -62,7 +62,7 @@ const statusLabel = (status) =>
   ({ effective: "现行有效", pending: "已公布尚未生效" })[status] ?? "见原文";
 const text = (value) => ({ content: [{ type: "text", text: value }] });
 
-const server = new McpServer({ name: "chinese-law", version: "1.0.0" });
+const server = new McpServer({ name: "chinese-law", version: "1.1.0" });
 
 server.tool(
   "search_laws",
