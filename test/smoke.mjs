@@ -1,40 +1,26 @@
-// 真实 stdio JSON-RPC 冒烟：同时验证服务器、jsDelivr 可用性与语料格式。
-import { spawn } from "node:child_process";
-import { createInterface } from "node:readline";
+// 真实 stdio MCP 冒烟：服务器、公共语料通道及条文格式必须全部可用。
+import assert from "node:assert/strict";
+import { Client } from "@modelcontextprotocol/sdk/client/index.js";
+import { StdioClientTransport } from "@modelcontextprotocol/sdk/client/stdio.js";
 
-const p = spawn("node", ["index.js"], { stdio: ["pipe", "pipe", "inherit"] });
-const rl = createInterface({ input: p.stdout });
-const pending = new Map();
-rl.on("line", (line) => {
-  try {
-    const msg = JSON.parse(line);
-    if (msg.id && pending.has(msg.id)) pending.get(msg.id)(msg);
-  } catch {}
+const transport = new StdioClientTransport({
+  command: process.execPath, args: ["index.js"],
+  // Docker 曾设置此变量为空字符串；确保默认公共数据地址仍可用。
+  env: { ...process.env, LAW_MCP_DATA_BASE: "" },
 });
-const send = (msg) => p.stdin.write(JSON.stringify(msg) + "\n");
-const call = (id, method, params) =>
-  new Promise((resolve, reject) => {
-    pending.set(id, resolve);
-    setTimeout(() => reject(new Error(`timeout: ${method}`)), 30000);
-    send({ jsonrpc: "2.0", id, method, params });
-  });
-
-const init = await call(1, "initialize", {
-  protocolVersion: "2024-11-05", capabilities: {}, clientInfo: { name: "smoke", version: "0" },
-});
-if (init.result.serverInfo.name !== "chinese-law") throw new Error("bad serverInfo");
-send({ jsonrpc: "2.0", method: "notifications/initialized" });
-
-const tools = await call(2, "tools/list", {});
-const names = tools.result.tools.map((t) => t.name).sort();
-if (JSON.stringify(names) !== JSON.stringify(["get_article", "search_in_law", "search_laws"]))
-  throw new Error(`tools drift: ${names}`);
-
-const art = await call(3, "tools/call", { name: "get_article", arguments: { law: "民法典", article_number: 577 } });
-const text = art.result.content[0].text;
-if (!text.includes("第五百七十七条") || !text.includes("civil-code/577.html"))
-  throw new Error(`get_article broken:\n${text.slice(0, 200)}`);
-
-console.log("smoke OK");
-p.kill();
-process.exit(0);
+const client = new Client({ name: "live-smoke", version: "1.0.0" });
+try {
+  await client.connect(transport);
+  const { tools } = await client.listTools();
+  assert.deepEqual(tools.map((t) => t.name).sort(), ["get_article", "list_laws", "search_in_law", "search_laws"]);
+  const page = await client.callTool({ name: "list_laws", arguments: { limit: 1 } });
+  assert.ok(!page.isError, JSON.stringify(page));
+  assert.ok(page.structuredContent.total > 0);
+  const art = await client.callTool({ name: "get_article", arguments: { law: "民法典", article_number: 577 } });
+  assert.ok(!art.isError, JSON.stringify(art));
+  const text = art.content[0].text;
+  assert.ok(text.includes("第五百七十七条") && text.includes("civil-code/577.html"), text.slice(0, 300));
+  console.log(`live smoke OK: ${page.structuredContent.total} laws; Civil Code article 577 verified`);
+} finally {
+  await client.close();
+}

@@ -12,6 +12,6 @@ RUN npm install --omit=dev --no-audit --no-fund
 COPY index.js ./
 
 # 语料直读通道可被覆盖（私有镜像或自建网关）。
-ENV LAW_MCP_DATA_BASE=""
+# 留空或不设置 LAW_MCP_DATA_BASE 时使用服务器的默认公共语料地址。
 
 ENTRYPOINT ["node", "/app/index.js"]
